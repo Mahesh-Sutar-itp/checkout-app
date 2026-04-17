@@ -55,7 +55,7 @@ function useTabSync() {
       if (!warningShownRef.current) {
         warningShownRef.current = true
         addNotification(
-          '⚠️ Cart dusre tab mein change hua! Refresh karo.',
+          '⚠️ Cart was modified in another tab! Please refresh.',
           'warning'
         )
         addAuditLog('TAB_SYNC: Cart change detected in another tab')

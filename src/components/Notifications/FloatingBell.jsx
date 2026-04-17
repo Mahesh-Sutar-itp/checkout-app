@@ -8,7 +8,7 @@ function FloatingBell() {
     <button
       onClick={toggleNotificationCenter}
       style={{
-        position: 'fixed',  // ← sirf fixed rakho
+        position: 'fixed',
         bottom: '20px',
         right: '20px',
         zIndex: 99998,
@@ -23,7 +23,6 @@ function FloatingBell() {
         alignItems: 'center',
         justifyContent: 'center',
         boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-        // ← position: 'relative' HATAO
       }}
       aria-label="Notification Center"
     >

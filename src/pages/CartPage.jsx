@@ -9,7 +9,7 @@ function CartPage() {
 
   const handleRemove = (item) => {
     removeItem(item.id)
-    addNotification(`${item.title.slice(0, 20)}... remove hua`, 'warning')
+    addNotification(`${item.title.slice(0, 20)}... removed from cart`, 'warning')
   }
 
   const handleQtyChange = (item, newQty) => {
@@ -23,8 +23,8 @@ function CartPage() {
   if (cartItems.length === 0) return (
     <div className="empty-cart">
       <div>🛒</div>
-      <h2>Cart Khali Hai!</h2>
-      <button onClick={() => navigate('/')}>Shopping Karo</button>
+      <h2>Your Cart is Empty!</h2>
+      <button onClick={() => navigate('/')}>Continue Shopping</button>
     </div>
   )
 

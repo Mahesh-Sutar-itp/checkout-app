@@ -114,8 +114,8 @@ self.addEventListener('fetch', (event) => {
                 </head>
                 <body>
                   <div class="emoji">📶</div>
-                  <h1>Aap Offline Hain!</h1>
-                  <p>Internet connection check karke dobara try karo</p>
+                  <h1>You Are Offline!</h1>
+                  <p>Please check your internet connection and try again</p>
                   <button onclick="location.reload()">
                     🔄 Retry
                   </button>

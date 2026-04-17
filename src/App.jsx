@@ -8,7 +8,7 @@ import NotificationSystem from './components/Notifications/NotificationSystem'
 import FloatingBell from './components/Notifications/FloatingBell'
 import useTabSync from './hooks/useTabSync'
 
-// ✅ Alag component banaya - hooks yahan call honge
+// ✅ Separate component banaya - hooks yahan call honge
 function AppContent() {
   useTabSync()  // ← Hook yahan call kar rahe
   

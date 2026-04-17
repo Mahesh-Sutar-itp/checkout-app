@@ -1,6 +1,7 @@
 // src/components/Notifications/NotificationSystem.jsx
 import { useEffect, useState } from 'react'
 import useCartStore from '../../store/cartStore'
+import './NotificationSystem.css'
 
 function NotificationItem({ notification, onDismiss }) {
   useEffect(() => {
@@ -10,46 +11,25 @@ function NotificationItem({ notification, onDismiss }) {
     return () => clearTimeout(timer)
   }, [])
 
-  const styles = {
-    success: { background: '#4ade80', color: '#14532d', icon: '✅' },
-    error:   { background: '#f87171', color: '#7f1d1d', icon: '❌' },
-    warning: { background: '#fbbf24', color: '#78350f', icon: '⚠️' },
-    info:    { background: '#60a5fa', color: '#1e3a5f', icon: 'ℹ️' },
+  const icons = {
+    success: '✅',
+    error: '❌',
+    warning: '⚠️',
+    info: 'ℹ️',
   }
-  const style = styles[notification.type] || styles.info
 
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        padding: '12px 16px',
-        borderRadius: '10px',
-        background: style.background,
-        color: style.color,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-        minWidth: '200px',
-        maxWidth: '300px',
-        animation: 'slideIn 0.3s ease',
-      }}
+      className={`toast-item toast-${notification.type}`}
       role="alert"
       aria-live="polite"
     >
-      <span style={{ fontSize: '18px' }}>{style.icon}</span>
-      <span style={{ flex: 1, fontSize: '14px', fontWeight: '500' }}>
-        {notification.message}
-      </span>
+      <span className="toast-icon">{icons[notification.type]}</span>
+      <span className="toast-message">{notification.message}</span>
       <button
+        className="toast-dismiss"
         onClick={() => onDismiss(notification.id)}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '16px',
-          color: style.color,
-          fontWeight: 'bold',
-        }}
+        style={{ color: 'inherit' }}
       >✕</button>
     </div>
   )
@@ -59,11 +39,11 @@ function NotificationCenter({ onClose }) {
   const { notificationHistory, clearNotificationHistory } = useCartStore()
   const [filter, setFilter] = useState('all')
 
-  const styles = {
-    success: { background: '#f0fdf4', color: '#16a34a', icon: '✅' },
-    error:   { background: '#fef2f2', color: '#dc2626', icon: '❌' },
-    warning: { background: '#fffbeb', color: '#d97706', icon: '⚠️' },
-    info:    { background: '#eff6ff', color: '#2563eb', icon: 'ℹ️' },
+  const icons = {
+    success: '✅',
+    error: '❌',
+    warning: '⚠️',
+    info: 'ℹ️',
   }
 
   const filteredHistory = filter === 'all'
@@ -79,63 +59,21 @@ function NotificationCenter({ onClose }) {
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      right: 0,
-      width: '320px',
-      height: '100vh',
-      background: 'white',
-      boxShadow: '-4px 0 20px rgba(0,0,0,0.15)',
-      zIndex: 99999,
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
+    <div className="nc-panel">
 
       {/* HEADER */}
-      <div style={{
-        background: '#1a1a2e',
-        padding: '16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <h3 style={{ color: 'white', margin: 0, fontSize: '16px' }}>
-          🔔 Notification Center
-        </h3>
-        <button
-          onClick={onClose}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'white',
-            fontSize: '20px',
-            cursor: 'pointer',
-          }}
-        >✕</button>
+      <div className="nc-header">
+        <h3>🔔 Notification Center</h3>
+        <button className="nc-close-btn" onClick={onClose}>✕</button>
       </div>
 
       {/* FILTERS */}
-      <div style={{
-        padding: '12px',
-        display: 'flex',
-        gap: '6px',
-        borderBottom: '1px solid #eee',
-        flexWrap: 'wrap',
-      }}>
+      <div className="nc-filters">
         {['all', 'success', 'error', 'warning', 'info'].map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            style={{
-              padding: '4px 10px',
-              borderRadius: '20px',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '12px',
-              background: filter === f ? '#1a1a2e' : '#eee',
-              color: filter === f ? 'white' : '#333',
-            }}
+            className={`nc-filter-btn ${filter === f ? 'active' : ''}`}
           >
             {f === 'all'     ? '📋 All'     :
              f === 'success' ? '✅ Success' :
@@ -145,77 +83,35 @@ function NotificationCenter({ onClose }) {
         ))}
       </div>
 
-      {/* HISTORY LIST */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+      {/* HISTORY */}
+      <div className="nc-history">
         {filteredHistory.length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#999', padding: '40px 0' }}>
-            Koi notifications nahi! 🎉
-          </div>
+          <div className="nc-empty">No notifications yet! 🎉</div>
         ) : (
-          [...filteredHistory].reverse().map(n => {
-            const style = styles[n.type] || styles.info
-            return (
-              <div
-                key={n.id}
-                style={{
-                  background: style.background,
-                  borderRadius: '8px',
-                  padding: '10px 12px',
-                  marginBottom: '8px',
-                  borderLeft: `3px solid ${style.color}`,
-                }}
-              >
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                  <span>{style.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#333' }}>
-                      {n.message}
-                    </p>
-                    <p style={{ margin: 0, fontSize: '11px', color: '#999' }}>
-                      {n.time?.slice(11, 19) || ''}
-                    </p>
-                  </div>
+          [...filteredHistory].reverse().map(n => (
+            <div key={n.id} className={`nc-item nc-item-${n.type}`}>
+              <div className="nc-item-content">
+                <span>{icons[n.type]}</span>
+                <div style={{ flex: 1 }}>
+                  <p className="nc-item-message">{n.message}</p>
+                  <p className="nc-item-time">{n.time?.slice(11, 19) || ''}</p>
                 </div>
               </div>
-            )
-          })
+            </div>
+          ))
         )}
       </div>
 
       {/* FOOTER */}
-      <div style={{
-        padding: '12px',
-        borderTop: '1px solid #eee',
-        display: 'flex',
-        gap: '8px',
-      }}>
-        <button
-          onClick={handleCopyDiagnostic}
-          style={{
-            flex: 1,
-            padding: '8px',
-            background: '#1a1a2e',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '12px',
-          }}
-        >📋 Copy Diagnostic</button>
-        <button
-          onClick={clearNotificationHistory}
-          style={{
-            flex: 1,
-            padding: '8px',
-            background: '#ffe0e0',
-            color: '#e94560',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '12px',
-          }}
-        >🗑️ Clear All</button>
+      <div className="nc-footer">
+        <button className="nc-copy-btn" onClick={handleCopyDiagnostic}>
+          📋 Copy Diagnostic
+        </button>
+        <button className="nc-clear-btn" onClick={clearNotificationHistory}>
+          🗑️ Clear All
+        </button>
       </div>
+
     </div>
   )
 }
@@ -231,26 +127,8 @@ function NotificationSystem() {
 
   return (
     <>
-      <style>{`
-        @keyframes slideIn {
-          from { transform: translateX(100%); opacity: 0; }
-          to   { transform: translateX(0);   opacity: 1; }
-        }
-      `}</style>
-
-      {/* TOAST NOTIFICATIONS - top right */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '70px',
-          right: '16px',
-          zIndex: 9999,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-        aria-label="Notifications"
-      >
+      {/* TOAST NOTIFICATIONS */}
+      <div className="toast-container" aria-label="Notifications">
         {notifications.map(n => (
           <NotificationItem
             key={n.id}
@@ -260,17 +138,12 @@ function NotificationSystem() {
         ))}
       </div>
 
-      {/* NOTIFICATION CENTER PANEL */}
+      {/* NOTIFICATION CENTER */}
       {notificationCenterOpen && (
         <>
           <div
+            className="nc-backdrop"
             onClick={toggleNotificationCenter}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(0,0,0,0.3)',
-              zIndex: 99997,
-            }}
           />
           <NotificationCenter onClose={toggleNotificationCenter} />
         </>

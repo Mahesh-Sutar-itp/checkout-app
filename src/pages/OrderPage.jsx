@@ -19,7 +19,7 @@ function OrderPage() {
   // Page load pe snapshot lo
   useEffect(() => {
     if (!orderId) {
-      addNotification("Order details nahi mile!", "warning");
+      addNotification("Order details not found!", "warning");
       setTimeout(() => navigate("/"), 1500);
       return;
     }
@@ -45,25 +45,25 @@ function OrderPage() {
       state: "CART_READY",
       label: "Cart Ready",
       icon: "🛒",
-      desc: "Items cart mein add hue",
+      desc: "Items added to cart",
     },
     {
       state: "CHECKOUT_VALIDATED",
       label: "Checkout Validated",
       icon: "🔒",
-      desc: "Security checks pass hue",
+      desc: "Security checks passed",
     },
     {
       state: "ORDER_SUBMITTED",
       label: "Order Submitted",
       icon: "📤",
-      desc: "Order server ko bheja",
+      desc: "Order sent to server",
     },
     {
       state: "ORDER_SUCCESS",
       label: "Order Confirmed",
       icon: "✅",
-      desc: "Order successfully place hua!",
+      desc: "Order placed successfully!",
     },
   ];
 
@@ -85,21 +85,16 @@ function OrderPage() {
     return "pending";
   };
 
-  //   const handleRetry = () => {
-  //     setOrderState("CART_READY");
-  //     addNotification("Cart reset - dobara try karo", "info");
-  //     navigate("/cart");
-  //   };
   const handleRetry = () => {
-    addNotification("🔄 Retry scheduled - cart ready hai!", "info");
-    addAuditLog("RETRY: User ne retry choose kiya");
+    addNotification("🔄 Retry scheduled - cart is ready!", "info");
+    addAuditLog("RETRY: User chose to retry");
     setOrderState("CART_READY");
     navigate("/cart");
   };
 
   const handleRollback = () => {
     setOrderState("ROLLED_BACK");
-    addNotification("Order rollback ho gaya!", "warning");
+    addNotification("Order has been rolled back!", "warning");
     setTimeout(() => {
       setOrderState("CART_READY");
       clearCart();
@@ -123,7 +118,7 @@ function OrderPage() {
     );
   }
 
-  // FAILED ya INCONSISTENT
+  // FAILED or INCONSISTENT
   if (
     savedOrderState === "ORDER_FAILED" ||
     savedOrderState === "ORDER_INCONSISTENT"
@@ -135,13 +130,13 @@ function OrderPage() {
         </div>
         <h2>
           {savedOrderState === "ORDER_FAILED"
-            ? "Order Fail Hua!"
+            ? "Order Failed!"
             : "Cart Inconsistent!"}
         </h2>
         <p>
           {savedOrderState === "ORDER_FAILED"
-            ? "Kuch technical problem aayi. Dobara try karo."
-            : "Cart mein kuch badlaav detect hua."}
+            ? "A technical issue occurred. Please try again."
+            : "A change was detected in your cart."}
         </p>
 
         <div className="failed-audit">
@@ -159,13 +154,13 @@ function OrderPage() {
         </div>
 
         <div className="failed-buttons">
-          {/* Retry - sirf ORDER_FAILED mein */}
+          {/* Retry - only for ORDER_FAILED */}
           {savedOrderState === "ORDER_FAILED" && (
             <button className="retry-btn" onClick={handleRetry}>
               🔄 Retry
             </button>
           )}
-          {/* Rollback - dono states mein */}
+          {/* Rollback - both states */}
           <button className="rollback-btn" onClick={handleRollback}>
             ↩️ Rollback
           </button>
@@ -184,7 +179,7 @@ function OrderPage() {
       <div className="order-success-header">
         <div className="success-emoji">🎉</div>
         <h2>Order Confirmed!</h2>
-        <p>Shukriya {customerName || "Dost"}! Tera order place ho gaya.</p>
+        <p>Thank you {customerName || "there"}! Your order has been placed.</p>
         <div className="order-id-badge">Order ID: #{orderId}</div>
       </div>
 
@@ -255,7 +250,7 @@ function OrderPage() {
       </div>
 
       <button className="continue-btn" onClick={() => navigate("/")}>
-        🛍️ Aur Shopping Karo
+        🛍️ Continue Shopping
       </button>
     </div>
   );

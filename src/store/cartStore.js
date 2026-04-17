@@ -104,7 +104,7 @@ const useCartStore = create(
           if (originalPrice && Math.abs(originalPrice - item.price) > 0.01) {
             tampered = true;
             addAuditLog(
-              `TAMPER_DETECTED: Product ${item.id} price changed from ${originalPrice} to ${item.price}`,
+              `TAMPER_DETECTED: Product ${item.id} price changed from ₹${originalPrice} to ₹${item.price}`,
             );
           }
         });
@@ -129,8 +129,8 @@ const useCartStore = create(
           const embeddedChecksum = parts[parts.length - 1];
 
           if (embeddedChecksum === checksum) {
-            get().addAuditLog("IDEMPOTENCY: Retry blocked - duplicate order!");
-            return null; // ← null = reuse detected!
+            get().addAuditLog("IDEMPOTENCY: Retry blocked - duplicate order detected!");
+            return null;
           }
         }
 
@@ -183,7 +183,7 @@ const useCartStore = create(
             `INVALID_TRANSITION: ${orderState} → ${newState} BLOCKED`,
           );
           console.warn(`Invalid transition: ${orderState} → ${newState}`);
-          return; // ← transition block!
+          return;
         }
 
         addAuditLog(`STATE: ${orderState} → ${newState}`);
@@ -191,8 +191,7 @@ const useCartStore = create(
       },
 
       // ===== NOTIFICATIONS =====
-      // DATA mein add karo:
-      notificationHistory: [], // ← sari notifications yaad rakhega
+      notificationHistory: [],
 
       addNotification: (message, type = "info") =>
         set((state) => {
@@ -206,12 +205,11 @@ const useCartStore = create(
             message,
             type,
             dismissed: false,
-            time: new Date().toISOString(), // ✅ time add karo
+            time: new Date().toISOString(),
           };
 
           return {
             notifications: [...state.notifications, newNotification],
-            // ✅ History mein bhi save karo
             notificationHistory: [
               ...state.notificationHistory,
               newNotification,
@@ -219,7 +217,6 @@ const useCartStore = create(
           };
         }),
 
-      // ✅ History clear karne ka function
       clearNotificationHistory: () => set({ notificationHistory: [] }),
 
       dismissNotification: (id) =>
@@ -243,8 +240,8 @@ const useCartStore = create(
         idempotencyKey: state.idempotencyKey,
         isLocked: state.isLocked,
         priceSnapshot: state.priceSnapshot,
-        orderState: state.orderState, // ← refresh recovery ke liye!
-        auditLog: state.auditLog, // ← audit log persist ke liye!
+        orderState: state.orderState,
+        auditLog: state.auditLog,
       }),
     },
   ),

@@ -34,7 +34,7 @@ function CheckoutPage() {
   useEffect(() => {
     if (orderState === "ORDER_SUBMITTED") {
       addNotification(
-        "⚠️ Page refresh hua! Order status check karo.",
+        "⚠️ Page was refreshed! Please check your order status.",
         "warning",
       );
       addAuditLog("RECOVERY: Page refreshed during ORDER_SUBMITTED");
@@ -58,11 +58,11 @@ function CheckoutPage() {
   const validateForm = () => {
     const errors = {};
 
-    if (!form.name.trim()) errors.name = "Naam is important";
-    if (!form.address.trim()) errors.address = "Address is important";
-    if (!form.phone.trim()) errors.phone = "Phone is important";
+    if (!form.name.trim()) errors.name = "Name is required";
+    if (!form.address.trim()) errors.address = "Address is required";
+    if (!form.phone.trim()) errors.phone = "Phone is required";
     else if (!/^\d{10}$/.test(form.phone))
-      errors.phone = "10 digit phone number required";
+      errors.phone = "Please enter a valid 10 digit phone number";
 
     setFormErrors(errors);
 
@@ -72,7 +72,7 @@ function CheckoutPage() {
   const runSecurityChecks = () => {
     const checksumOk = verifyChecksum();
     if (!checksumOk) {
-      addNotification("Changes occured in cart!", "error");
+      addNotification("Cart integrity check failed!", "error");
       addAuditLog("SECURITY: Checksum mismatch");
       setOrderState("ORDER_INCONSISTENT");
       return false;
@@ -90,7 +90,7 @@ function CheckoutPage() {
   // ✅ STALE CART CHECK
   const checkStaleCart = async () => {
     try {
-      addNotification("Cart prices verify ho rahi hain...", "info");
+      addNotification("Verifying cart prices...", "info");
 
       // Fresh prices API se fetch karo
       const response = await fetch("https://fakestoreapi.com/products");
@@ -123,7 +123,7 @@ function CheckoutPage() {
           );
         });
         addNotification(
-          `⚠️ ${staleItems.length} item(s) ke prices change ho gaye! Checkout block kiya.`,
+          `⚠️ ${staleItems.length} item(s) have updated prices! Checkout blocked.`,
           "warning",
         );
         setOrderState("ORDER_INCONSISTENT");
@@ -136,7 +136,7 @@ function CheckoutPage() {
       // API fail hua toh warn karo but block mat karo
       addAuditLog("STALE_CHECK: Could not verify prices (API error)");
       addNotification(
-        "⚠️ Prices verify nahi ho sake - proceed kar rahe hain",
+        "⚠️ Could not verify prices - proceeding with checkout",
         "warning",
       );
       return true;
@@ -145,11 +145,11 @@ function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (isSubmitting.current || isLocked) {
-      addNotification("Already in process!", "warning");
+      addNotification("Order is already being processed!", "warning");
       return;
     }
     if (!validateForm()) {
-      addNotification("Fill the form correctly!", "warning");
+      addNotification("Please fill the form correctly!", "warning");
       return;
     }
     const securityPassed = runSecurityChecks();
@@ -167,14 +167,14 @@ function CheckoutPage() {
     isSubmitting.current = true;
     lockCheckout();
     setOrderState("CHECKOUT_VALIDATED");
-    addNotification("Validation pass!", "info");
+    addNotification("Validation passed!", "info");
 
     const idempotencyKey = generateIdempotencyKey();
-    
+
     // ✅ Retry blocked check
     if (!idempotencyKey) {
       addNotification(
-        "🚫 Retry blocked! Same cart already submitted hai.",
+        "🚫 Retry blocked! This cart has already been submitted.",
         "error",
       );
       addAuditLog("IDEMPOTENCY: Retry blocked - duplicate order attempt");
@@ -183,7 +183,7 @@ function CheckoutPage() {
       return;
     }
 
-    addNotification("📤 Order submit ho raha hai...", "info");
+    addNotification("📤 Submitting your order...", "info");
     addAuditLog(`ORDER: key=${idempotencyKey}`);
     setOrderState("ORDER_SUBMITTED");
 
@@ -220,9 +220,9 @@ function CheckoutPage() {
 
       // ✅ Invalid response - id nahi hai?
       if (!data || !data.id) {
-        addAuditLog("INVALID_RESPONSE: API ne sahi data nahi diya");
+        addAuditLog("INVALID_RESPONSE: API returned invalid data");
         setOrderState("ORDER_INCONSISTENT");
-        addNotification("⚠️ Invalid response mila!", "error");
+        addNotification("⚠️ Received invalid response from server!", "error");
         isSubmitting.current = false;
         unlockCheckout();
         setTimeout(() => {
@@ -233,7 +233,7 @@ function CheckoutPage() {
 
       // ✅ SUCCESS
       setOrderState("ORDER_SUCCESS");
-      addNotification("🎉 Order placed!", "success");
+      addNotification("🎉 Order placed successfully!", "success");
       addAuditLog(`ORDER_SUCCESS: Order ID ${data.id}`);
 
       setTimeout(() => {
@@ -244,12 +244,12 @@ function CheckoutPage() {
       // ✅ Timeout aur normal error alag handle
       if (err.message === "REQUEST_TIMEOUT") {
         addAuditLog(
-          "ORDER_FAILED: Request timeout - 5 sec mein response nahi aaya",
+          "ORDER_FAILED: Request timeout - no response received in 5 seconds",
         );
-        addNotification("⏱️ Request timeout! Dobara try karo.", "error");
+        addNotification("⏱️ Request timed out! Please try again.", "error");
       } else {
         addAuditLog(`ORDER_FAILED: ${err.message}`);
-        addNotification("❌ Order failed!", "error");
+        addNotification("❌ Order failed! Please try again.", "error");
       }
 
       setOrderState("ORDER_FAILED");
@@ -266,7 +266,6 @@ function CheckoutPage() {
     if (orderState === "ORDER_SUBMITTED") return "⏳ Processing...";
     if (orderState === "CHECKOUT_VALIDATED") return "✅ Validated!";
     if (isLocked) return "🔒 Locked...";
-
     return "🛍️ Place Order";
   };
 
@@ -302,7 +301,7 @@ function CheckoutPage() {
           <label>Full Name *</label>
           <input
             type="text"
-            placeholder="Apna naam likho"
+            placeholder="Enter your full name"
             value={form.name}
             className={formErrors.name ? "error" : ""}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -313,7 +312,7 @@ function CheckoutPage() {
         <div className="form-group">
           <label>Address *</label>
           <textarea
-            placeholder="Delivery address likho"
+            placeholder="Enter your delivery address"
             value={form.address}
             rows={3}
             className={formErrors.address ? "error" : ""}
@@ -328,7 +327,7 @@ function CheckoutPage() {
           <label>Phone Number *</label>
           <input
             type="tel"
-            placeholder="10 digit number"
+            placeholder="Enter 10 digit phone number"
             value={form.phone}
             className={formErrors.phone ? "error" : ""}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}

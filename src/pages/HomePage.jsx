@@ -48,7 +48,7 @@ function HomePage() {
         setCategories(catData);
         setLoading(false);
       } catch (err) {
-        addNotification("Products load nahi hue!", "error");
+        addNotification("Failed to load products!", "error");
         setLoading(false);
       }
     };
@@ -88,8 +88,8 @@ function HomePage() {
   }, [products, search, category, sortBy]);
 
   // ===== GRID ROWS =====
-  const COLUMNS = windowWidth <= 768 ? 2 
-              : windowWidth <= 1024 ? 3 
+  const COLUMNS = windowWidth <= 768 ? 2
+              : windowWidth <= 1024 ? 3
               : 4;
 
   const rows = useMemo(() => {
@@ -102,9 +102,9 @@ function HomePage() {
 
   // ===== ROW HEIGHT - Responsive =====
   const getRowHeight = () => {
-    if (windowWidth < 768) return 250   // Mobile
-    if (windowWidth >= 768 && windowWidth <= 1024) return 320  // iPad/Tablet
-    return 320                            // Desktop
+    if (windowWidth < 768) return 250
+    if (windowWidth >= 768 && windowWidth <= 1024) return 320
+    return 320
   }
 
   const isMobile = windowWidth <= 768;
@@ -127,7 +127,7 @@ function HomePage() {
     (product) => {
       addItem(product);
       addNotification(
-        `${product.title.slice(0, 20)}... cart mein add hua!`,
+        `${product.title.slice(0, 20)}... added to cart!`,
         "success"
       );
     },
@@ -137,7 +137,7 @@ function HomePage() {
   if (loading)
     return (
       <div className="loading-container">
-        Products load ho rahe hain... ⏳
+        Loading products... ⏳
       </div>
     );
 
@@ -211,14 +211,14 @@ function HomePage() {
 
       {/* COUNT */}
       <p className="products-count">
-        {filteredProducts.length} products mile
+        {filteredProducts.length} products found
         <span style={{
           fontSize: "12px",
           color: "#999",
           marginLeft: "8px"
         }}>
-          (Virtual rendering: sirf{" "}
-          {virtualizer.getVirtualItems().length} DOM mein)
+          (Virtual rendering: only{" "}
+          {virtualizer.getVirtualItems().length} in DOM)
         </span>
       </p>
 
