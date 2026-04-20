@@ -112,3 +112,6 @@ checkout-app/
 │   └── index.css
 └── package.json
 ```
+## 🎥 Screen Recording
+
+[Watch Demo Video](https://youtu.be/S2Il0MQCvF0)

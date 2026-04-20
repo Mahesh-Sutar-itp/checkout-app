@@ -66,11 +66,8 @@ function HomePage() {
   // ===== FILTER + SEARCH + SORT =====
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => {
-      const matchSearch = p.title
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const matchCategory =
-        category === "all" || p.category === category;
+      const matchSearch = p.title.toLowerCase().includes(search.toLowerCase());
+      const matchCategory = category === "all" || p.category === category;
       return matchSearch && matchCategory;
     });
 
@@ -79,18 +76,14 @@ function HomePage() {
     } else if (sortBy === "price-high") {
       result = [...result].sort((a, b) => b.price - a.price);
     } else if (sortBy === "name-az") {
-      result = [...result].sort((a, b) =>
-        a.title.localeCompare(b.title)
-      );
+      result = [...result].sort((a, b) => a.title.localeCompare(b.title));
     }
 
     return result;
   }, [products, search, category, sortBy]);
 
   // ===== GRID ROWS =====
-  const COLUMNS = windowWidth <= 768 ? 2
-              : windowWidth <= 1024 ? 3
-              : 4;
+  const COLUMNS = windowWidth <= 768 ? 2 : windowWidth <= 1024 ? 3 : 4;
 
   const rows = useMemo(() => {
     const result = [];
@@ -102,10 +95,10 @@ function HomePage() {
 
   // ===== ROW HEIGHT - Responsive =====
   const getRowHeight = () => {
-    if (windowWidth < 768) return 250
-    if (windowWidth >= 768 && windowWidth <= 1024) return 320
-    return 320
-  }
+    if (windowWidth < 768) return 250;
+    if (windowWidth >= 768 && windowWidth <= 1024) return 320;
+    return 320;
+  };
 
   const isMobile = windowWidth <= 768;
 
@@ -119,8 +112,8 @@ function HomePage() {
 
   // ✅ windowWidth change hone par force update
   useEffect(() => {
-    virtualizer.measure()
-  }, [windowWidth])
+    virtualizer.measure();
+  }, [windowWidth]);
 
   // ===== ADD TO CART =====
   const handleAddToCart = useCallback(
@@ -128,29 +121,21 @@ function HomePage() {
       addItem(product);
       addNotification(
         `${product.title.slice(0, 20)}... added to cart!`,
-        "success"
+        "success",
       );
     },
-    [addItem, addNotification]
+    [addItem, addNotification],
   );
 
   if (loading)
-    return (
-      <div className="loading-container">
-        Loading products... ⏳
-      </div>
-    );
+    return <div className="loading-container">Loading products... ⏳</div>;
 
   return (
     <div className="home-wrapper">
-
       {/* HEADER */}
       <div className="home-header">
         <h1>🛒 ShopFast</h1>
-        <button
-          className="cart-btn"
-          onClick={() => navigate("/cart")}
-        >
+        <button className="cart-btn" onClick={() => navigate("/cart")}>
           Cart ({cartItems.length})
         </button>
       </div>
@@ -184,20 +169,26 @@ function HomePage() {
       </div>
 
       {/* SORT */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-        marginBottom: "16px",
-      }}>
-        <span style={{
-          fontSize: "14px",
-          color: "#666",
-          fontWeight: "600"
-        }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          marginBottom: "16px",
+        }}
+      >
+        <label
+          htmlFor="sort-select"
+          style={{
+            fontSize: "14px",
+            color: "#666",
+            fontWeight: "600",
+          }}
+        >
           Sort:
-        </span>
+        </label>
         <select
+          id="sort-select"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="sort-select"
@@ -212,13 +203,15 @@ function HomePage() {
       {/* COUNT */}
       <p className="products-count">
         {filteredProducts.length} products found
-        <span style={{
-          fontSize: "12px",
-          color: "#999",
-          marginLeft: "8px"
-        }}>
-          (Virtual rendering: only{" "}
-          {virtualizer.getVirtualItems().length} in DOM)
+        <span
+          style={{
+            fontSize: "12px",
+            color: "#999",
+            marginLeft: "8px",
+          }}
+        >
+          (Virtual rendering: only {virtualizer.getVirtualItems().length} in
+          DOM)
         </span>
       </p>
 
@@ -279,7 +272,6 @@ function HomePage() {
           })}
         </div>
       </div>
-
     </div>
   );
 }

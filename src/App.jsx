@@ -9,19 +9,22 @@ import FloatingBell from './components/Notifications/FloatingBell'
 import useTabSync from './hooks/useTabSync'
 
 // ✅ Separate component banaya - hooks yahan call honge
+// src/App.jsx
 function AppContent() {
-  useTabSync()  // ← Hook yahan call kar rahe
-  
+  useTabSync()
+
   return (
     <>
       <NotificationSystem />
       <FloatingBell />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/order" element={<OrderPage />} />
-      </Routes>
+      <main>  
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/order" element={<OrderPage />} />
+        </Routes>
+      </main>  
     </>
   )
 }

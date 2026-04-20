@@ -62,7 +62,7 @@ function useTabSync() {
 
         setTimeout(() => {
           warningShownRef.current = false
-        }, 10000)
+        }, 3000)
       }
     }
 

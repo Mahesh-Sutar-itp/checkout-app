@@ -30,7 +30,7 @@
 }
 
 .cart-btn {
-  background: #e94560;
+  background: #c0392b;
   color: white;
   border: none;
   padding: 8px 14px;
@@ -147,7 +147,7 @@
 }
 
 .product-card .product-price {
-  color: #e94560;
+  color: #c0392b;  
   font-weight: bold;
   font-size: 16px;
 }
@@ -273,4 +273,8 @@
     font-size: 13px;
     padding: 6px 10px;
   }
+}
+
+.cart-btn:hover {
+  background: #a93226;  
 }
